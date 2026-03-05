@@ -1,9 +1,15 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import Header from "@/components/Header";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, Lock, User } from "lucide-react";
+
+import loginBg from "@/assets/login.jpg";
+import logo from "@/assets/dark_logo.jpg";
 
 export default function Login() {
+
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -16,159 +22,371 @@ export default function Login() {
     confirmPassword: "",
   });
 
-  const navigate = useNavigate();
+  /* -------------------------------- */
+  /* Redirect if already logged in    */
+  /* -------------------------------- */
+
+  useEffect(() => {
+
+    const user = localStorage.getItem("user");
+
+    if (user) {
+
+      const parsed = JSON.parse(user);
+
+      if (parsed.role === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+
+    }
+
+  }, [navigate]);
+
+
+  /* -------------------------------- */
+  /* Input change handler             */
+  /* -------------------------------- */
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
+
   };
 
+
+  /* -------------------------------- */
+  /* Create separate user storage     */
+  /* -------------------------------- */
+
+  const createUserStorage = (email: string) => {
+
+    const key = email.toLowerCase();
+
+    if (!localStorage.getItem(`cart_${key}`)) {
+      localStorage.setItem(`cart_${key}`, JSON.stringify([]));
+    }
+
+    if (!localStorage.getItem(`wishlist_${key}`)) {
+      localStorage.setItem(`wishlist_${key}`, JSON.stringify([]));
+    }
+
+    if (!localStorage.getItem(`orders_${key}`)) {
+      localStorage.setItem(`orders_${key}`, JSON.stringify([]));
+    }
+
+  };
+
+
+  /* -------------------------------- */
+  /* Form submit                      */
+  /* -------------------------------- */
+
   const handleSubmit = async (e: React.FormEvent) => {
+
     e.preventDefault();
+
     setError("");
 
     if (!isLogin) {
-      // Signup Validation
+
       if (formData.password !== formData.confirmPassword) {
         setError("Passwords do not match");
         return;
       }
 
-      alert("Signup is disabled in demo. Please login.");
+      alert("Signup disabled in demo. Please login.");
       setIsLogin(true);
+
       return;
+
     }
 
     try {
+
       setLoading(true);
 
       const response = await fetch("http://localhost:8080/api/login", {
+
         method: "POST",
+
         headers: {
           "Content-Type": "application/json",
         },
+
         body: JSON.stringify({
           email: formData.email,
           password: formData.password,
         }),
+
       });
 
       const data = await response.json();
 
       if (!response.ok) {
+
         setError(data.message || "Login failed");
         return;
+
       }
 
-      // Save logged in user
+      /* Save logged in user */
+
       localStorage.setItem("user", JSON.stringify(data));
 
-      // 🔥 ROLE BASED REDIRECT
+      /* Create user storage */
+
+      createUserStorage(data.email);
+
+      /* Role based redirect */
+
       if (data.role === "admin") {
         navigate("/admin");
       } else {
         navigate("/dashboard");
       }
 
-    } catch (err) {
-      setError("Server error. Try again.");
-    } finally {
-      setLoading(false);
     }
+
+    catch {
+
+      setError("Server error. Try again.");
+
+    }
+
+    finally {
+
+      setLoading(false);
+
+    }
+
   };
 
+
+  /* -------------------------------- */
+  /* UI                               */
+  /* -------------------------------- */
+
   return (
-    <div className="min-h-screen bg-background">
+
+    <div className="relative min-h-screen">
+
+      {/* Background Image */}
+
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{ backgroundImage: `url(${loginBg})` }}
+      />
+
+      {/* Dark + Blur Overlay */}
+
+      <div className="absolute inset-0 bg-black/40 backdrop" />
+
       <Header />
 
-      <div className="flex items-center justify-center min-h-[calc(100.SyntaxError-80px)] py-12 px-4 sm:px-6 lg:px-8">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-xl shadow-lg p-8 md:p-12">
 
-            <div className="text-center mb-8">
-              <span className="text-4xl font-bold text-primary">SBC</span>
-              <p className="text-sm text-primary font-medium tracking-widest">
-                Shweta
-              </p>
+      {/* Right aligned login card */}
+
+      <div className="relative flex justify-end items-center min-h-[calc(100vh-80px)] px-10">
+
+        <div className="w-full max-w-2xl">
+
+          {/* Glass Card */}
+
+          <div className="bg-white/20 backdrop-blur-xl border border-white/30 shadow-2xl rounded-2xl p-12">
+
+            {/* Logo */}
+
+            <div className="flex justify-center mb-8">
+
+              <Link to="/" className="flex items-center">
+
+                <img
+                  src={logo}
+                  alt="company logo"
+                  className="h-40 w-auto object-contain"
+                />
+
+              </Link>
+
             </div>
 
-            <div className="flex gap-2 mb-8 border-b border-border">
+
+            {/* Tabs */}
+
+            <div className="flex mb-8 border-b border-white/30">
+
               <button
                 onClick={() => setIsLogin(true)}
-                className={`pb-3 font-medium text-sm ${
+                className={`flex-1 pb-3 text-sm font-medium ${
                   isLogin
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-muted-foreground"
+                    ? "text-white border-b-2 border-white"
+                    : "text-white/60"
                 }`}
               >
                 Login
               </button>
+
               <button
                 onClick={() => setIsLogin(false)}
-                className={`pb-3 font-medium text-sm ${
+                className={`flex-1 pb-3 text-sm font-medium ${
                   !isLogin
-                    ? "text-primary border-b-2 border-primary"
-                    : "text-muted-foreground"
+                    ? "text-white border-b-2 border-white"
+                    : "text-white/60"
                 }`}
               >
                 Sign Up
               </button>
+
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-4">
+
+            {/* Form */}
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+
+              {!isLogin && (
+
+                <div>
+
+                  <label className="text-sm mb-2 block text-white">
+                    Full Name
+                  </label>
+
+                  <div className="relative">
+
+                    <User
+                      size={18}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70"
+                    />
+
+                    <input
+                      type="text"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      className="w-full pl-10 pr-4 py-3 bg-white/30 border border-white/40 rounded-lg text-white placeholder-white/70"
+                      placeholder="Enter your name"
+                    />
+
+                  </div>
+
+                </div>
+
+              )}
+
+
+              {/* Email */}
 
               <div>
-                <label className="block text-sm mb-2">Email</label>
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-3 border rounded-lg"
-                  required
-                />
+
+                <label className="text-sm mb-2 block text-white">
+                  Email
+                </label>
+
+                <div className="relative">
+
+                  <Mail
+                    size={18}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70"
+                  />
+
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full pl-10 pr-4 py-3 bg-white/30 border border-white/40 rounded-lg text-white placeholder-white/70"
+                    placeholder="Enter your email"
+                    required
+                  />
+
+                </div>
+
               </div>
 
+
+              {/* Password */}
+
               <div>
-                <label className="block text-sm mb-2">Password</label>
+
+                <label className="text-sm mb-2 block text-white">
+                  Password
+                </label>
+
                 <div className="relative">
+
+                  <Lock
+                    size={18}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-white/70"
+                  />
+
                   <input
                     type={showPassword ? "text" : "password"}
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border rounded-lg pr-10"
+                    className="w-full pl-10 pr-10 py-3 bg-white/30 border border-white/40 rounded-lg text-white placeholder-white/70"
+                    placeholder="Enter password"
                     required
                   />
+
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+
+                    {showPassword ? (
+                      <EyeOff size={18} />
+                    ) : (
+                      <Eye size={18} />
+                    )}
+
                   </button>
+
                 </div>
+
               </div>
 
+
               {error && (
-                <p className="text-red-500 text-sm">{error}</p>
+                <p className="text-red-300 text-sm">{error}</p>
               )}
+
+
+              {/* Button */}
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 bg-primary text-white rounded-lg mt-6"
+                className="w-full py-3 rounded-lg font-semibold bg-gradient-to-r from-[#f6c88f] to-[#e6a96b] text-white hover:opacity-90 transition"
               >
-                {loading ? "Logging in..." : "Login"}
+
+                {loading
+                  ? "Logging in..."
+                  : isLogin
+                  ? "Login"
+                  : "Create Account"}
+
               </button>
+
             </form>
 
           </div>
+
         </div>
+
       </div>
+
     </div>
+
   );
+
 }
