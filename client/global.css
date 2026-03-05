@@ -1,0 +1,182 @@
+/** @import must precede all other statements */
+@import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /**
+   * Tailwind CSS theme for SBC by Shweta luxury fashion store
+   * tailwind.config.ts expects the following color variables to be expressed as HSL values.
+   * A different format will require also updating the theme in tailwind.config.ts.
+  */
+  :root {
+    /* Background - Premium warm cream/beige */
+    --background: 30 35% 97%;
+    --foreground: 210 15% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 15% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 15% 15%;
+
+    /* Primary - Premium gold/brown */
+    --primary: 35 55% 48%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary - Premium light cream */
+    --secondary: 30 45% 94%;
+    --secondary-foreground: 210 15% 15%;
+
+    /* Muted - Light gray */
+    --muted: 210 12% 87%;
+    --muted-foreground: 210 12% 42%;
+
+    /* Accent - Deep peacock blue */
+    --accent: 210 55% 22%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 30 35% 91%;
+    --input: 30 35% 91%;
+    --ring: 35 55% 48%;
+
+    --radius: 1rem;
+
+    --sidebar-background: 30 30% 96%;
+    --sidebar-foreground: 210 10% 20%;
+    --sidebar-primary: 35 50% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 50% 25%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 30 30% 90%;
+    --sidebar-ring: 35 50% 50%;
+  }
+
+  .dark {
+    --background: 210 10% 15%;
+    --foreground: 30 30% 95%;
+
+    --card: 210 10% 20%;
+    --card-foreground: 30 30% 95%;
+
+    --popover: 210 10% 20%;
+    --popover-foreground: 30 30% 95%;
+
+    --primary: 35 60% 55%;
+    --primary-foreground: 210 10% 20%;
+
+    --secondary: 210 10% 30%;
+    --secondary-foreground: 30 30% 95%;
+
+    --muted: 210 10% 35%;
+    --muted-foreground: 210 10% 70%;
+
+    --accent: 210 50% 65%;
+    --accent-foreground: 210 10% 20%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 210 10% 30%;
+    --input: 210 10% 30%;
+    --ring: 35 60% 55%;
+    --sidebar-background: 210 10% 15%;
+    --sidebar-foreground: 30 30% 95%;
+    --sidebar-primary: 35 60% 55%;
+    --sidebar-primary-foreground: 210 10% 20%;
+    --sidebar-accent: 210 50% 65%;
+    --sidebar-accent-foreground: 210 10% 20%;
+    --sidebar-border: 210 10% 30%;
+    --sidebar-ring: 35 60% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    background-image:
+      radial-gradient(circle at 20% 50%, rgba(212, 180, 140, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 80% 80%, rgba(212, 180, 140, 0.1) 0%, transparent 50%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+  }
+
+  h1 {
+    font-size: 3.5rem;
+    font-weight: 800;
+  }
+
+  h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+  }
+
+  h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.75rem;
+    font-weight: 600;
+  }
+
+  :where(p, span, li, h1, h2, h3, h4, h5, h6, a, button, label, td, th) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+
+  pre,
+  code {
+    overflow-x: auto;
+    white-space: pre;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-8 py-3 bg-primary text-primary-foreground rounded-full font-semibold transition-all hover:bg-primary/85 hover:shadow-lg active:scale-95 uppercase tracking-wider text-sm;
+  }
+
+  .btn-secondary {
+    @apply px-8 py-3 bg-secondary text-secondary-foreground rounded-full font-semibold transition-all hover:bg-secondary/70 active:scale-95 uppercase tracking-wider text-sm;
+  }
+
+  .heading-lg {
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight;
+  }
+
+  .heading-md {
+    @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight;
+  }
+
+  .heading-sm {
+    @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold;
+  }
+
+  .premium-border {
+    @apply border border-border;
+  }
+
+  .premium-shadow {
+    @apply shadow-lg;
+  }
+
+  .premium-card {
+    @apply bg-white rounded-xl border border-border p-8 hover:shadow-2xl transition-all duration-300;
+  }
+}
